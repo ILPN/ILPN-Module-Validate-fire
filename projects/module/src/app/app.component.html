@@ -1,9 +1,61 @@
 <ilpn-page-layout>
-    <h2>TODO title</h2>
+    <h2>
+        Fire a run in a Petri net - This algorithm is published at <br>
+        <i>Firing Partial Orders in a Petri Net</i> by R. Bergenthum in PETRI NETS 2021.<br>
+        It solves the following problem:<br>
+        Let PN be a petri net and RN be a run. Check if RN ∈ L(PN) holds.
+    </h2>
     <hr>
 
     <div fxLayout="row wrap" fxLayoutAlign="space-evenly start">
+        <ilpn-file-upload [descriptionText]="'drop a labeled Petri net file here'" [fileDisplay]="FD_PN" [showText]="petriNet === undefined" (fileContent)="parsePN($event)"></ilpn-file-upload>
+        <ilpn-file-upload [descriptionText]="'drop a partial order file here'" [fileDisplay]="FD_PO" [showText]="partialOrder === undefined" (fileContent)="parsePO($event)"></ilpn-file-upload>
+        <ilpn-file-download [descriptionText]="'download validate result'" [squareContent]="'🐉'" [disabled]="resultFile === undefined" [files]="resultFile"></ilpn-file-download>
+    </div>
 
+    <hr>
+    <h2>The algorithm is implemented as follows:</h2>
+    <div fxLayout="row" fxLayoutAlign="center start">
+        <pre>
+            <code class="code">
+INPUT marked p/t-net (P,T,W,m0), run (V,<,l)
+01 (V,vi,vf,<,l) := extension of (V,<,l)
+02 (first successor of vi).marking add m0
+03 for each e ∈ V  in <-order  do
+04    Pfnvaild add {{"{"}}p ∈ P| e.marking(p) < W(p,l(e))}
+05    Pfbranch add {{"{"}}p ∈ P| e.marking(p) > 0, |e•|>1}
+06    (first successor of e).marking add e.marking - ºl(e) + l(e)º
+07 Pfnvaild  add {{"{"}}p ∈ P| vf.marking(p) < 0}
+08 Pvalid := P \ Pfnvaild
+09 Pnvalid := Pfnvaild ∪ (P \ Pfbranch)
+10 P' := P \ (Pvaild ∪ Pnvalid)
+11 (P,T,W,m0) := (P',T,W|P'×P',m0|P')
+12 (first predecessor of vf).marking2 add vf.marking|P
+13 for each e ∈ V  in reverse <-order do
+14    Pbnvaild add {{"{"}}p ∈ P| e.marking2(p) < W(l(e),p)}
+15    Pbbranch add {{"{"}}p ∈ P| e.marking2(p) + W(p,l(e)) - W(l(e),p) > 0, |•e|>1}
+16    (first predecessor of e).marking2 add e.marking2 + ºl(e) - l(e)º
+17 Pvalid add P \ Pbnvaild
+18 Pnvalid add Pbnvaild ∪ (P \ Pbbranch)
+19 P' := P \ (Pvaild ∪ Pnvalid)
+20 (P,T,W,m0) := (P',T,W|P'×P',m0|P')
+21 Pnvalid add CheckUsingCompactTokenflows (P,T,W,m0),(V,<,l)
+OUTPUT Pnvalid
+            </code>
+        </pre>
+    </div>
+
+    <hr>
+    <h2>download examples</h2>
+    <div fxLayout="row wrap">
+        <ilpn-descriptive-link [fileDisplay]="FD_PN" title="Petri net" description="get yourself a simple example Petri net" link="assets/pn.txt" [download]="true"></ilpn-descriptive-link>
+        <ilpn-descriptive-link [fileDisplay]="FD_PO" title="run" description="get yourself a simple example run" link="assets/run.txt" [download]="true"></ilpn-descriptive-link>
+
+        <ilpn-descriptive-link [fileDisplay]="FD_PN" title="satellite memory" description="from the famous Model Checking Contest" link="assets/net_SatelliteMemoryX100Y3.txt" [download]="true"></ilpn-descriptive-link>
+        <ilpn-descriptive-link [fileDisplay]="FD_PO" title="satellite memory" description="from the famous Model Checking Contest" link="assets/run_SatelliteMemoryX100Y3.txt" [download]="true"></ilpn-descriptive-link>
+
+        <ilpn-descriptive-link [fileDisplay]="FD_PN" title="discovery contest" description="from the famous Process Discovery Contest" link="assets/net_pdc1111110.txt" [download]="true"></ilpn-descriptive-link>
+        <ilpn-descriptive-link [fileDisplay]="FD_PO" title="discovery contest" description="from the famous Process Discovery Contest" link="assets/run_pdc1111110.txt" [download]="true"></ilpn-descriptive-link>
     </div>
 
 </ilpn-page-layout>
