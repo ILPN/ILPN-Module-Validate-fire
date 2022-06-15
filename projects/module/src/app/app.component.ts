@@ -3,7 +3,8 @@ import {APP_BASE_HREF} from '@angular/common';
 import {
     AlgorithmResult,
     DropFile, FD_PARTIAL_ORDER, FD_PETRI_NET, PartialOrder,
-    PartialOrderParserService, PetriNet, PetriNetParserService
+    PartialOrderParserService, PetriNet, PetriNetParserService,
+    LpoFireValidator
 } from 'ilpn-components';
 
 @Component({
@@ -52,18 +53,18 @@ export class AppComponent {
         if (this.petriNet !== undefined && this.partialOrder !== undefined) {
             this.resultFile = undefined;
             try {
-                // const validator = new LpoFlowValidator(this.petriNet, this.partialOrder);
-                //
-                // const start = performance.now();
-                // const results = validator.validate();
-                // const end = performance.now();
-                //
-                // const result = new AlgorithmResult(AppComponent.ALGORITHM_NAME, start, end);
-                // const places = this.petriNet.getPlaces();
-                // for (let i = 0; i < places.length; i++) {
-                //     result.addOutputLine(`${places[i].id} ${results[i] ? 'valid' : 'not valid'}`);
-                // }
-                // this.resultFile = result.toDropFile(AppComponent.RESULT_FILE_NAME);
+                const validator = new LpoFireValidator(this.petriNet, this.partialOrder);
+
+                const start = performance.now();
+                const results = validator.validate();
+                const end = performance.now();
+
+                const result = new AlgorithmResult(AppComponent.ALGORITHM_NAME, start, end);
+                const places = this.petriNet.getPlaces();
+                for (let i = 0; i < places.length; i++) {
+                    result.addOutputLine(`${places[i].id} ${results[i].valid ? 'valid' : 'not valid'} ${results[i].phase}`);
+                }
+                this.resultFile = result.toDropFile(AppComponent.RESULT_FILE_NAME);
             } catch (e) {
                 const error = e as Error;
                 const result = new AlgorithmResult(AppComponent.ALGORITHM_NAME);
