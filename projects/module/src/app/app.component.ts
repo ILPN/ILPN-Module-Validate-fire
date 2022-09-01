@@ -1,5 +1,4 @@
 import {Component} from '@angular/core';
-import {APP_BASE_HREF} from '@angular/common';
 import {
     AlgorithmResult,
     DropFile, FD_PARTIAL_ORDER, FD_PETRI_NET, PartialOrder,
@@ -10,10 +9,7 @@ import {
 @Component({
     selector: 'app-root',
     templateUrl: './app.component.html',
-    styleUrls: ['./app.component.scss'],
-    providers: [
-        {provide: APP_BASE_HREF, useValue: '/ilovepetrinets/dragon/'}
-    ]
+    styleUrls: ['./app.component.scss']
 })
 export class AppComponent {
 
